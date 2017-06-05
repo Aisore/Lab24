@@ -141,11 +141,17 @@ void tree_simplify(Tree t)
     if (t->right) {
         tree_simplify(t->right);
     }
-
     if (t->node.type == OPERATOR && t->node.data.operator == '/') {
         if (t->right->node.data.value_int == 1) {
-            t->right = t->left->right;
-            t->left = t->left->left;
+            if(t->right->left == NULL) {
+                t->right = t->right->right;
+                free(t->right);
+            } else if (t->right->right == NULL) {
+                t->right = t->right->left;
+                free(t->right);
+            }
+            t->node.data.operator = NULL;
+            t = t->left; 
         }
     }
 }
